@@ -129,13 +129,15 @@ async function LoadComments() {
         let body = document.getElementById('comment-body');
         body.innerHTML = '';
         for (const c of comments) {
+            const text = c.isDeleted ? `<s>${c.text}</s>` : c.text;
+            const btnLabel = c.isDeleted ? 'Restore' : 'Delete';
             body.innerHTML += `<tr>
                 <td>${c.id}</td>
-                <td>${c.text}</td>
+                <td>${text}</td>
                 <td>${c.postId}</td>
                 <td>
                     <input type='submit' value='edit' onclick='EditComment("${c.id}")' />
-                    <input type='submit' value='delete' onclick='DeleteComment("${c.id}")' />
+                    <input type='submit' value='${btnLabel}' onclick='ToggleDeleteComment("${c.id}")' />
                 </td>
             </tr>`;
         }
@@ -193,10 +195,18 @@ async function EditComment(id) {
     } catch (e) { console.error(e); }
 }
 
-async function DeleteComment(id) {
+async function ToggleDeleteComment(id) {
     try {
-        let res = await fetch('http://localhost:3000/comments/' + id, { method: 'DELETE' });
-        if (res.ok) console.log('comment deleted');
+        let getItem = await fetch('http://localhost:3000/comments/' + id);
+        if (!getItem.ok) return;
+        let comment = await getItem.json();
+        let newVal = !comment.isDeleted;
+        let res = await fetch('http://localhost:3000/comments/' + id, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isDeleted: newVal })
+        });
+        if (res.ok) console.log(newVal ? 'comment soft-deleted' : 'comment restored');
         LoadComments();
     } catch (e) { console.error(e); }
 }

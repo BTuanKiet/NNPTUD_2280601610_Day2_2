@@ -73,19 +73,22 @@
     {
       "title": "2222",
       "views": "1111",
-      "id": "14"
+      "id": "14",
+      "isDeleted": false
     }
   ],
   "comments": [
     {
       "id": "1",
       "text": "a comment about post 1",
-      "postId": "1"
+      "postId": "1",
+      "isDeleted": false
     },
     {
       "id": "2",
       "text": "another comment about post 1",
-      "postId": "1"
+      "postId": "1",
+      "isDeleted": false
     }
   ],
   "profile": {
